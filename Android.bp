@@ -1,0 +1,28 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+android_app {
+    name: "Spoofify",
+    certificate: "platform",
+    defaults: ["SettingsLibDefaults"],
+    srcs: ["src/**/*.kt"],
+    platform_apis: true,
+    privileged: true,
+    system_ext_specific: true,
+    required: ["privapp-permissions-spoofify.xml"],
+    static_libs: [
+        "androidx.appcompat_appcompat",
+        "androidx.core_core",
+        "androidx.preference_preference",
+        "org.lineageos.settings.resources",
+    ],
+}
+
+prebuilt_etc {
+    name: "privapp-permissions-spoofify.xml",
+    src: "privapp-permissions-spoofify.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}

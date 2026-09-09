@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <string name="app_name">Spoofify</string>
+    <string name="settings_summary">Keybox, build properties, and Google Photos spoofing</string>
+
+    <string name="category_integrity">Play Integrity</string>
+    <string name="category_google">Google</string>
+
+    <string name="keybox_title">Keybox</string>
+    <string name="props_title">Build properties</string>
+
+    <string name="keybox_switch_title">Use custom keybox</string>
+    <string name="keybox_switch_on">Key attestation uses the imported keybox</string>
+    <string name="keybox_switch_off">Key attestation reports the real hardware</string>
+
+    <string name="props_switch_title">Use custom build properties</string>
+    <string name="props_switch_on">Apps see the imported build properties</string>
+    <string name="props_switch_off">Apps see this device\'s real build properties</string>
+
+    <string name="category_profile">Import</string>
+    <string name="category_properties">Properties</string>
+    <string name="category_keybox_details">Keybox</string>
+    <string name="keybox_device_id">Device ID</string>
+    <string name="keybox_keys">Keys</string>
+    <string name="keybox_certificates">Certificates</string>
+
+    <string name="photos_title">Google Photos original quality</string>
+    <string name="photos_summary">Spoof a Pixel to Google Photos for unlimited original-quality backup</string>
+
+    <string name="status_off">Off</string>
+    <string name="status_unset">Not set — using real device values</string>
+    <string name="status_keybox_set">Set · valid keybox</string>
+    <string name="status_props_set">Set · %1$d properties</string>
+    <string name="status_invalid">Invalid — nothing will be applied</string>
+
+    <string name="action_import">Import from file</string>
+    <string name="action_url">Fetch from URL</string>
+    <string name="action_clear">Clear</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="fetch">Fetch</string>
+    <string name="url_default_keybox" translatable="false">https://raw.githubusercontent.com/loonage/ota/refs/heads/los-23/spoofify/keybox.xml</string>
+    <string name="url_default_props" translatable="false">https://raw.githubusercontent.com/loonage/ota/refs/heads/los-23/spoofify/PIF.json</string>
+
+    <string name="toast_applied">Applied</string>
+    <string name="toast_cleared">Cleared</string>
+    <string name="toast_empty">Nothing to apply</string>
+    <string name="toast_error">Couldn\'t read file</string>
+    <string name="toast_fetching">Fetching…</string>
+    <string name="toast_fetch_failed">Fetch failed</string>
+    <string name="toast_invalid_keybox">Not a valid keybox — nothing was changed</string>
+    <string name="toast_invalid_props">Not a valid properties profile — nothing was changed</string>
+</resources>
