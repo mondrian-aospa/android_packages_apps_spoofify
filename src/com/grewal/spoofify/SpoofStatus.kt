@@ -38,10 +38,7 @@ object SpoofStatus {
         if (blob.isNullOrBlank()) return false
         return when (target) {
             SpoofTarget.PROPS -> props(blob).isNotEmpty()
-            SpoofTarget.KEYBOX ->
-                blob.contains("<NumberOfKeyboxes") &&
-                    blob.contains("<PrivateKey") &&
-                    blob.contains("<Certificate")
+            SpoofTarget.KEYBOX -> isUsableKeybox(blob)
         }
     }
 
@@ -92,6 +89,69 @@ object SpoofStatus {
             name in VERSION_FIELDS -> VERSION_PREFIX + name
             else -> name
         }
+
+    /** Mirrors KeyProviderManager in frameworks/base, so only keyboxes it will load pass. */
+    private fun isUsableKeybox(blob: String): Boolean {
+        var keyboxCount: Int? = null
+        var algorithm: String? = null
+        var keyCertificates = 0
+        val privateKeys = mutableSetOf<String>()
+        val certificates = mutableMapOf<String, Int>()
+        try {
+            val parser = Xml.newPullParser()
+            parser.setInput(StringReader(blob))
+            var event = parser.next()
+            while (event != XmlPullParser.END_DOCUMENT) {
+                if (event == XmlPullParser.START_TAG) {
+                    when (parser.name) {
+                        "NumberOfKeyboxes" -> {
+                            parser.next()
+                            keyboxCount = parser.text?.trim()?.toIntOrNull() ?: return false
+                        }
+
+                        "Key" -> {
+                            algorithm =
+                                when (parser.getAttributeValue(null, "algorithm")?.lowercase()) {
+                                    "ecdsa" -> "EC"
+                                    "rsa" -> "RSA"
+                                    else -> null
+                                }
+                            keyCertificates = 0
+                        }
+
+                        "PrivateKey" -> {
+                            if (!isPem(parser)) return false
+                            parser.next()
+                            algorithm?.let {
+                                if (parser.text == null) return false
+                                privateKeys.add(it)
+                            }
+                        }
+
+                        "Certificate" -> {
+                            if (!isPem(parser)) return false
+                            val alg = algorithm
+                            if (alg != null && keyCertificates < 3) {
+                                parser.next()
+                                if (parser.text == null) return false
+                                keyCertificates++
+                                certificates[alg] = maxOf(certificates[alg] ?: 0, keyCertificates)
+                            }
+                        }
+                    }
+                }
+                event = parser.next()
+            }
+        } catch (e: Exception) {
+            Log.d(TAG, "Couldn't parse keybox", e)
+            return false
+        }
+        return keyboxCount == 1 &&
+            listOf("EC", "RSA").all { it in privateKeys && (certificates[it] ?: 0) >= 3 }
+    }
+
+    private fun isPem(parser: XmlPullParser): Boolean =
+        "pem".equals(parser.getAttributeValue(null, "format"), ignoreCase = true)
 
     fun keybox(context: Context, blob: String?): List<Pair<String, String>> {
         if (blob.isNullOrBlank()) return emptyList()
