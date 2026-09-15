@@ -71,8 +71,7 @@ class SpoofTargetFragment : SettingsBasePreferenceFragment() {
         profile.addPreference(action(R.string.action_url) { showUrlDialog() })
         clearPreference =
             action(R.string.action_clear) {
-                writeBlob(null)
-                toast(R.string.toast_cleared)
+                if (writeBlob(null)) toast(R.string.toast_cleared)
             }
         profile.addPreference(clearPreference)
 
@@ -137,19 +136,26 @@ class SpoofTargetFragment : SettingsBasePreferenceFragment() {
             isEnabled = enabled
         }
 
-    private fun writeBlob(value: String?) {
-        store.setBlob(target, value)
+    private fun writeBlob(value: String?): Boolean {
+        val saved =
+            try {
+                store.setBlob(target, value)
+                true
+            } catch (e: RuntimeException) {
+                Log.e(TAG, "Couldn't save ${target.name} profile", e)
+                toast(R.string.toast_save_failed)
+                false
+            }
         refresh()
+        return saved
     }
 
     private fun applyImport(value: String) {
         when {
             value.isBlank() -> toast(R.string.toast_empty)
+            value.length > MAX_BLOB_LENGTH -> toast(R.string.toast_too_large)
             !SpoofStatus.isValid(target, value) -> toast(target.invalidRes)
-            else -> {
-                writeBlob(value)
-                toast(R.string.toast_applied)
-            }
+            writeBlob(value) -> toast(R.string.toast_applied)
         }
     }
 
@@ -230,6 +236,9 @@ class SpoofTargetFragment : SettingsBasePreferenceFragment() {
     companion object {
         private const val TAG = "SpoofTargetFragment"
         private const val ARG_TARGET = "target"
+
+        // SettingsProvider rejects longer values (SettingsState.MAX_LENGTH_PER_STRING).
+        private const val MAX_BLOB_LENGTH = 32768
 
         fun newInstance(target: SpoofTarget) =
             SpoofTargetFragment().apply {

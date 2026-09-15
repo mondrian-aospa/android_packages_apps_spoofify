@@ -54,4 +54,6 @@
     <string name="toast_fetch_failed">Fetch failed</string>
     <string name="toast_invalid_keybox">Not a valid keybox — nothing was changed</string>
     <string name="toast_invalid_props">Not a valid properties profile — nothing was changed</string>
+    <string name="toast_save_failed">Couldn\'t save profile</string>
+    <string name="toast_too_large">Profile is too large — nothing was changed</string>
 </resources>
