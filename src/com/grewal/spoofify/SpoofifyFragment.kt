@@ -9,7 +9,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
-import androidx.preference.SwitchPreferenceCompat
+import co.aospa.framework.preference.SecureSettingSwitchPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 
 class SpoofifyFragment : SettingsBasePreferenceFragment() {
@@ -40,15 +40,11 @@ class SpoofifyFragment : SettingsBasePreferenceFragment() {
             PreferenceCategory(context).apply { title = getString(R.string.category_google) }
         screen.addPreference(google)
         google.addPreference(
-            SwitchPreferenceCompat(context).apply {
+            SecureSettingSwitchPreference(context).apply {
+                key = SpoofStore.KEY_PHOTOS
+                setDefaultValue(true)
                 title = getString(R.string.photos_title)
                 summary = getString(R.string.photos_summary)
-                isPersistent = false
-                isChecked = store.photosSpoof
-                setOnPreferenceChangeListener { _, newValue ->
-                    store.photosSpoof = newValue as Boolean
-                    true
-                }
             }
         )
 

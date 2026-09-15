@@ -24,23 +24,11 @@ class SpoofStore(context: Context) {
             Settings.Secure.putString(cr, KEY_PROPS, value?.ifBlank { null })
         }
 
-    var keyboxEnabled: Boolean
+    val keyboxEnabled: Boolean
         get() = Settings.Secure.getInt(cr, KEY_SPOOF_KEYBOX, 1) != 0
-        set(value) {
-            Settings.Secure.putInt(cr, KEY_SPOOF_KEYBOX, if (value) 1 else 0)
-        }
 
-    var propsEnabled: Boolean
+    val propsEnabled: Boolean
         get() = Settings.Secure.getInt(cr, KEY_SPOOF_PROPS, 1) != 0
-        set(value) {
-            Settings.Secure.putInt(cr, KEY_SPOOF_PROPS, if (value) 1 else 0)
-        }
-
-    var photosSpoof: Boolean
-        get() = Settings.Secure.getInt(cr, KEY_PHOTOS, 1) != 0
-        set(value) {
-            Settings.Secure.putInt(cr, KEY_PHOTOS, if (value) 1 else 0)
-        }
 
     fun blobOf(target: SpoofTarget): String? =
         when (target) {
@@ -61,18 +49,17 @@ class SpoofStore(context: Context) {
             SpoofTarget.PROPS -> propsEnabled
         }
 
-    fun setEnabled(target: SpoofTarget, value: Boolean) {
-        when (target) {
-            SpoofTarget.KEYBOX -> keyboxEnabled = value
-            SpoofTarget.PROPS -> propsEnabled = value
-        }
-    }
-
     companion object {
         private const val KEY_KEYBOX = "keybox_data"
         private const val KEY_PROPS = "certified_props_data"
-        private const val KEY_SPOOF_KEYBOX = "spoof_keybox"
-        private const val KEY_SPOOF_PROPS = "spoof_props"
-        private const val KEY_PHOTOS = "spoof_google_photos"
+        const val KEY_SPOOF_KEYBOX = "spoof_keybox"
+        const val KEY_SPOOF_PROPS = "spoof_props"
+        const val KEY_PHOTOS = "spoof_google_photos"
+
+        fun enabledKey(target: SpoofTarget): String =
+            when (target) {
+                SpoofTarget.KEYBOX -> KEY_SPOOF_KEYBOX
+                SpoofTarget.PROPS -> KEY_SPOOF_PROPS
+            }
     }
 }

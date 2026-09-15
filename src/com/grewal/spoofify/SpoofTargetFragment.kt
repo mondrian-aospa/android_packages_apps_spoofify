@@ -15,7 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
-import androidx.preference.SwitchPreferenceCompat
+import co.aospa.framework.preference.SecureSettingSwitchPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import java.net.HttpURLConnection
 import java.net.URL
@@ -25,7 +25,7 @@ class SpoofTargetFragment : SettingsBasePreferenceFragment() {
     private lateinit var store: SpoofStore
     private lateinit var target: SpoofTarget
 
-    private lateinit var masterSwitch: SwitchPreferenceCompat
+    private lateinit var masterSwitch: SecureSettingSwitchPreference
     private lateinit var clearPreference: Preference
 
     private lateinit var detailsCategory: PreferenceCategory
@@ -45,13 +45,12 @@ class SpoofTargetFragment : SettingsBasePreferenceFragment() {
         val screen = preferenceManager.createPreferenceScreen(context)
 
         masterSwitch =
-            SwitchPreferenceCompat(context).apply {
+            SecureSettingSwitchPreference(context).apply {
+                key = SpoofStore.enabledKey(target)
+                setDefaultValue(true)
                 title = getString(target.switchTitleRes)
-                isPersistent = false
-                isChecked = store.isEnabled(target)
                 setOnPreferenceChangeListener { _, newValue ->
-                    store.setEnabled(target, newValue as Boolean)
-                    refresh(newValue)
+                    refresh(newValue as Boolean)
                     true
                 }
             }
